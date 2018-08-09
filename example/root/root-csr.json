@@ -1,0 +1,20 @@
+{
+    "CN": "Testing - ROOT CA",
+    "key": {
+        "algo": "rsa",
+        "size": 4096
+    },
+    "ca" : {
+      "expiry": "262800h",
+      "pathlen": 2
+    },
+    "names": [
+        {
+            "C": "CL",
+            "ST": "RM",
+            "L": "Santiago",
+            "O": "Testing",
+            "OU": "Testing Root CA"
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "pki-tool",
+  "version": "1.0.0",
+  "description": "A NodeJS command line tool to create TLS/SSL certificate tree for QA and testing purposes",
+  "main": "index.js",
+  "repository": "git@github.com:patotech/pki-tool.git",
+  "author": "Patricio Tellez <d.mad.duck@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "commander": "^2.17.1"
+  }
+}

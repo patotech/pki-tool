@@ -1,0 +1,20 @@
+{
+    "CN": "app1.crm",
+    "hosts": [
+        "localhost",
+        "app1"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 4096
+    },
+    "names": [
+        {
+            "C": "CL",
+            "ST": "RM",
+            "L": "Santiago",
+            "O": "Testing",
+            "OU": "Testing - Microservices - CRM - APP-1"
+        }
+    ]
+}
