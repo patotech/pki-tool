@@ -32,16 +32,6 @@ const initIntermediate = function( parentCADir, caDir, outDir ) {
 };
 
 const serviceCertificate = function( parentCADir, caDir, outDir ) {
-    /*
-    cfssl gencert \
-           -ca crypto-config/intermediates/$caNivel1/$caNivel2/$caNivel2-intermediate.pem \
-           -ca-key crypto-config/intermediates/$caNivel1/$caNivel2/$caNivel2-key.pem \
-           -config intermediates/$caNivel1/$caNivel2/$caNivel3/app-config.json \
-           -profile server \
-           intermediates/$caNivel1/$caNivel2/$caNivel3/app-csr.json \
-      | cfssljson -bare crypto-config/intermediates/$caNivel1/$caNivel2/$caNivel3/$caNivel3
-    */
-
     // Then sign it with the parent
     var parentCAName = path.basename( parentCADir );
     var caName = path.basename( caDir );
