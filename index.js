@@ -35,9 +35,10 @@ program
 
 program
   .command('create-intermediate <parentCADir> <vaultDirPath> <vaultUrlPath> <vaultToken> <commonName>')
-  .alias('p')
+  .alias('ci')
   .option('-r, --replace', 'Replace current secret engine')
   .option('-o, --organization [organization]', 'CA Organization')
+  .option('-v, --ttl [ttl]', 'Time to Live')
   .option('-u, --ou [organizational unit]', 'CA Organizational Unit')
   .option('-c, --country [country]', 'CA Country')
   .option('-l, --locality [locality]', 'CA Locality')
@@ -45,6 +46,7 @@ program
   .option('-s, --street [street]', 'CA Street Address')
   .option('-t, --postalCode [postal code]', 'CA Postal Code')
   .option('-n, --names [other names]', 'CA Alternative Names')
+  .option('-d, --domains <a>..<b>', 'CA Allowed Domains',)
   .description('Create a new intermediate CA in Vault using the parent CA indicated by the path')
   .action( ( parentCADir, vaultDirPath, vaultUrlPath, vaultToken, commonName, options ) => {
     vaultPki.createIntermediate( parentCADir, vaultDirPath, vaultUrlPath, vaultToken, commonName, options );

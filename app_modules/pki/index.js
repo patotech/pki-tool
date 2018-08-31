@@ -25,11 +25,13 @@ const disableIntermediatePkiEngine = function( vaultBinary, vaultUrlPath, vaultT
     }
 };
 
-const createServiceRole = function( vaultUrlPath, vaultToken ) {
+const createServiceRole = function( vaultUrlPath, vaultToken, allowedDomains ) {
     const createRoleRequest = {
-        "allowed_domains": ["example.com"],
+        "allowed_domains": allowedDomains,
         "allow_subdomains": true
-        };
+    };
+
+    console.log('Creating service role for : ' + allowedDomains);
 
     const postData = JSON.stringify( createRoleRequest );
 
@@ -116,7 +118,7 @@ const buildTrustChain = function( baseCaFolder ) {
     }
 };
 
-const uploadSignedCertificate = function( parentCaDir, signedRequest, vaultUrlPath, vaultToken ) {
+const uploadSignedCertificate = function( parentCaDir, signedRequest, vaultUrlPath, vaultToken, allowedDomains ) {
     var trustChain = "";
     try {
         trustChain = buildTrustChain( parentCaDir );
@@ -152,7 +154,7 @@ const uploadSignedCertificate = function( parentCaDir, signedRequest, vaultUrlPa
                 data += chunk;
             });
             res.on('end', () => {
-                createServiceRole( vaultUrlPath, vaultToken );
+                createServiceRole( vaultUrlPath, vaultToken, allowedDomains );
                 console.log('Certificate Uploaded - Ready to Use');
             });        
         });
@@ -168,7 +170,7 @@ const uploadSignedCertificate = function( parentCaDir, signedRequest, vaultUrlPa
     }
 };
 
-const signCertificate = function( parentCaDir, certResponse, vaultUrlPath, vaultToken ) {
+const signCertificate = function( parentCaDir, certResponse, vaultUrlPath, vaultToken, allowedDomains ) {
     const parentCaFolder = path.resolve( parentCaDir );
     const parentCaPublicFileName = parentCaFolder.split(path.sep).pop() + '-intermediate.pem';
     const parentCaPrivateFileName = parentCaFolder.split(path.sep).pop() + '-key.pem';
@@ -185,7 +187,7 @@ const signCertificate = function( parentCaDir, certResponse, vaultUrlPath, vault
                     "cert sign",
                     "crl sign"
                 ],
-                "expiry": "336h",
+                "expiry": "672h",
                 "is_ca": true,
                 "ca_constraint": {
                     "is_ca": true,
@@ -222,10 +224,10 @@ const signCertificate = function( parentCaDir, certResponse, vaultUrlPath, vault
     } catch ( error ) {
         console.log("Error signing intermediate CA: " + error);
     }
-    uploadSignedCertificate( parentCaDir, signedCa, vaultUrlPath, vaultToken );
+    uploadSignedCertificate( parentCaDir, signedCa, vaultUrlPath, vaultToken, allowedDomains );
 };
 
-const createIntermediateCA = function( parentCaDir, caInfo, vaultUrlPath, vaultToken ) {
+const createIntermediateCA = function( parentCaDir, caInfo, vaultUrlPath, vaultToken, allowedDomains ) {
     const postData = JSON.stringify(caInfo);
     const generateCaOptions = {
         hostname: 'localhost',
@@ -246,7 +248,7 @@ const createIntermediateCA = function( parentCaDir, caInfo, vaultUrlPath, vaultT
             data += chunk;
         });
         res.on('end', () => {
-            signCertificate( parentCaDir, data, vaultUrlPath, vaultToken );
+            signCertificate( parentCaDir, data, vaultUrlPath, vaultToken, allowedDomains );
         });        
     });
 
@@ -300,8 +302,11 @@ const createIntermediate = function( parentCaDir, vaultDirPath, vaultUrlPath, va
     if( options.names ) {
         caInfo.alt_names = options.names;
     }
-    
-    createIntermediateCA( parentCaDir, caInfo, vaultUrlPath, vaultToken );
+    if( options.ttl ) {
+        caInfo.ttl = options.ttl;
+    }    
+    allowedDomains = options.domains || ['example.com'];
+    createIntermediateCA( parentCaDir, caInfo, vaultUrlPath, vaultToken, allowedDomains );
 };
 
 module.exports = { createIntermediate };
